@@ -20,7 +20,8 @@ export const api = {
   },
   
   async checkHealth(): Promise<{ status: string }> {
-    const response = await axios.get(`${API_URL.replace('/api/v1', '')}/health`);
+    const baseUrl = API_URL.replace(/\/api\/v1\/?$/, '');
+    const response = await axios.get(`${baseUrl}/status`);
     return response.data;
   }
 };

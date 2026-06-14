@@ -58,7 +58,7 @@ async def root():
     return RedirectResponse(url="/docs")
 
 
-@app.get("/health", tags=["System"])
+@app.get("/status", tags=["System"])
 async def health_check():
     return {
         "status": "healthy", 
@@ -68,9 +68,6 @@ async def health_check():
 
 @app.post(f"{settings.API_V1_STR}/predict", response_model=PredictionResponse, tags=["Prediction"])
 async def predict_toxicity(request: PredictionRequest):
-    if not model_service.model:
-        raise HTTPException(status_code=503, detail="Model is currently unavailable")
-        
     try:
         predictions = model_service.predict(request.text)
         is_toxic = any(pred["flag"] for pred in predictions.values())
