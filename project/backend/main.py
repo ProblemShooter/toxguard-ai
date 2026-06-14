@@ -51,6 +51,11 @@ async def add_security_headers_and_log(request: Request, call_next):
 @app.on_event("startup")
 async def startup_event():
     logger.info("Application started. Model will be loaded lazily on first request to prevent Render port scan timeout.")
+from fastapi.responses import RedirectResponse
+
+@app.get("/", include_in_schema=False)
+async def root():
+    return RedirectResponse(url="/docs")
 
 
 @app.get("/health", tags=["System"])
