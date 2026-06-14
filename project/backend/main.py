@@ -50,14 +50,8 @@ async def add_security_headers_and_log(request: Request, call_next):
 
 @app.on_event("startup")
 async def startup_event():
-    logger.info("Initializing application and loading models...")
-    try:
-        model_service.load()
-    except Exception as e:
-        logger.error(f"Failed to load model: {e}")
-        # In a real production system, we might not want to crash if we can retry or use a fallback,
-        # but here we should fail fast if the model isn't available.
-        # pass
+    logger.info("Application started. Model will be loaded lazily on first request to prevent Render port scan timeout.")
+
 
 @app.get("/health", tags=["System"])
 async def health_check():

@@ -16,6 +16,11 @@ class ModelService:
         
     def load(self):
         logger.info(f"Loading model from {settings.MODEL_PATH}...")
+        
+        # Optimize TF for memory constrained environments (like Render's 512MB tier)
+        tf.config.threading.set_inter_op_parallelism_threads(1)
+        tf.config.threading.set_intra_op_parallelism_threads(1)
+        
         if not os.path.exists(settings.MODEL_PATH):
             raise FileNotFoundError(f"Model not found at {settings.MODEL_PATH}")
         self.model = tf.keras.models.load_model(settings.MODEL_PATH)
@@ -39,8 +44,8 @@ class ModelService:
 
     def predict(self, text: str) -> dict:
         if self.model is None or self.vectorizer is None:
-            raise RuntimeError("Model is not loaded.")
-            
+            logger.info("Lazy loading model on first prediction...")
+            self.load()            
         vectorized_text = self.vectorizer(np.array([text]))
         prediction = self.model.predict(vectorized_text)[0]
         
