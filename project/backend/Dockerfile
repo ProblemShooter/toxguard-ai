@@ -14,6 +14,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
+# Limit memory fragmentation and TF overhead
+ENV MALLOC_ARENA_MAX=2
+ENV TF_NUM_INTEROP_THREADS=1
+ENV TF_NUM_INTRAOP_THREADS=1
+ENV TF_ENABLE_ONEDNN_OPTS=0
+
 # Expose port
 EXPOSE 8000
 

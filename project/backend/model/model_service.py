@@ -23,7 +23,7 @@ class ModelService:
         
         if not os.path.exists(settings.MODEL_PATH):
             raise FileNotFoundError(f"Model not found at {settings.MODEL_PATH}")
-        self.model = tf.keras.models.load_model(settings.MODEL_PATH)
+        self.model = tf.keras.models.load_model(settings.MODEL_PATH, compile=False)
         
         logger.info(f"Loading vocabulary from {settings.VOCAB_PATH}...")
         if not os.path.exists(settings.VOCAB_PATH):
