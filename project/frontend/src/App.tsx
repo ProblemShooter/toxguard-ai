@@ -122,8 +122,8 @@ function App() {
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
-                        if (text.trim()) {
-                          handlePredict(e as any);
+                        if (text.trim() && !loading) {
+                          e.currentTarget.form?.requestSubmit();
                         }
                       }
                     }}
