@@ -119,6 +119,14 @@ function App() {
                   <textarea
                     value={text}
                     onChange={(e) => setText(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        if (text.trim()) {
+                          handlePredict(e as any);
+                        }
+                      }
+                    }}
                     placeholder="Type or paste a comment here..."
                     className="w-full h-40 bg-background/50 border border-surface rounded-xl p-4 text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all resize-none"
                     disabled={loading}

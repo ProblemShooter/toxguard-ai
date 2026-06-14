@@ -37,7 +37,6 @@ class ModelService:
         vocab = vocab[:20000]
             
         self.vectorizer = TextVectorization(max_tokens=20000,
-                                            output_sequence_length=1800,
                                             output_mode='int',
                                             vocabulary=vocab)
         logger.info("Model and vectorizer loaded successfully.")
@@ -50,11 +49,25 @@ class ModelService:
         prediction = self.model.predict(vectorized_text)[0]
         
         results = {}
+        
+        # Simple explicit keyword list to catch blatant cases the model might underestimate
+        text_lower = text.lower()
+        explicit_keywords = ['motherfucker', 'faggot', 'nigger', 'cunt', 'retard', 'kill you', 'kill yourself']
+        has_explicit = any(word in text_lower for word in explicit_keywords)
+        
         for idx, col in enumerate(self.classes):
             prob = float(prediction[idx])
+            
+            # Boost probability if explicit keywords are found and model is somewhat confident
+            if has_explicit and col in ['toxic', 'obscene', 'insult'] and prob < 0.8:
+                prob = min(0.95, prob + 0.5)
+                
+            # Use slightly more sensitive threshold due to model's tendency to underpredict long sequences
+            threshold = 0.35
+                
             results[col] = {
                 "probability": prob,
-                "flag": prob > 0.5
+                "flag": prob > threshold
             }
             
         return results
